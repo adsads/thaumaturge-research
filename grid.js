@@ -1,10 +1,12 @@
 // Hex-grid input: place 2+ aspect nodes (and holes), then fill in the aspects that connect them.
 $(function(){
 	var SIZE = 30, SQ3 = Math.sqrt(3);
-	var DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
-	var radius = 3, cells = {}; // "q,r" -> {type:"node"|"hole"|"fill", aspect}
+	// Flat-top hexes copied from the in-game research table: q = column, r = half-row (neighbours: same column r+-2, next column r+-1).
+	var DIRS = [[0,2],[0,-2],[1,1],[1,-1],[-1,1],[-1,-1]];
+	var LAYOUT = {0: [4,6,8], 1: [1,3,5,7,9], 2: [0,2,4,6,8,10], 3: [1,3,7,9,11], 4: [0,2,4,6,8,10], 5: [3,5,7,9], 6: [2,4,6,8]};
+	var cells = {}; // "q,r" -> {type:"node"|"hole"|"fill", aspect}
 	function key(q, r) { return q + "," + r; }
-	function inGrid(q, r) { return Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r)) <= radius; }
+	function inGrid(q, r) { return !!LAYOUT[q] && LAYOUT[q].indexOf(r) >= 0; }
 	function usable(a) { return !$("#" + a).hasClass("unavail"); }
 	function cost(a) { return usable(a) ? 1 : 100; }
 
@@ -17,11 +19,10 @@ $(function(){
 	}
 
 	function render() {
-		var w = SIZE * (3 * radius + 2), h = SQ3 * SIZE * (2 * radius + 1) + SIZE;
+		var w = SIZE * 1.5 * 6 + 2 * SIZE + 8, h = SQ3 / 2 * SIZE * 11 + SQ3 * SIZE + 8;
 		var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">';
-		for (var q = -radius; q <= radius; q++) for (var r = -radius; r <= radius; r++) {
-			if (!inGrid(q, r)) continue;
-			var c = cells[key(q, r)] || {}, x = w / 2 + SIZE * 1.5 * q, y = h / 2 + SQ3 * SIZE * (r + q / 2);
+		for (var q = 0; q <= 6; q++) LAYOUT[q].forEach(function(r){
+			var c = cells[key(q, r)] || {}, x = SIZE + 4 + SIZE * 1.5 * q, y = SQ3 / 2 * SIZE * (r + 1) + 4;
 			var pts = [0,1,2,3,4,5].map(function(i){
 				var a = Math.PI / 3 * i; return (x + SIZE * Math.cos(a)) + "," + (y + SIZE * Math.sin(a));
 			}).join(" ");
@@ -30,7 +31,7 @@ $(function(){
 			if (c.aspect) svg += '<title>' + c.aspect + '</title><image href="aspects/color/' + translate[c.aspect] + '.png" x="' + (x - 16) + '" y="' + (y - 20) + '" width="32" height="32"/>'
 				+ '<text x="' + x + '" y="' + (y + 18) + '" font-size="9" text-anchor="middle" fill="#333">' + translate[c.aspect] + '</text>';
 			svg += '</g>';
-		}
+		});
 		$("#grid_svg").html(svg + "</svg>");
 	}
 
@@ -104,7 +105,6 @@ $(function(){
 	});
 	$("#grid_solve").click(solve);
 	$("#grid_clear").click(function(){ cells = {}; $("#grid_msg").text(""); render(); });
-	$("#grid_radius").change(function(){ radius = +this.value; cells = {}; render(); });
 	$("#version").change(function(){ cells = {}; aspectOptions(); render(); });
 	aspectOptions(); render();
 });

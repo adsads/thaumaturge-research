@@ -24,6 +24,16 @@
 <body>
 	<h2>Thaumaturge Research Helper</h2>
 	<div id="combination_box"><div id="left"></div><span class="operator">+</span><div id="right"></div><span class="operator">=</span><div id="equals"></div></div>
+	<h3>Grid (any number of aspects)</h3>
+	<p>Pick a tool, click cells to match your research note, then <strong>Fill Grid</strong>. Use <em>Aspect</em> for the nodes already on the note, <em>Hole</em> for blocked cells. Aspects disabled above are used only if there is no other way.</p>
+	<div>
+		<label><input type="radio" name="grid_tool" value="node" checked> Aspect</label> <select id="grid_aspect"></select>
+		<label><input type="radio" name="grid_tool" value="hole"> Hole</label>
+		<label><input type="radio" name="grid_tool" value="erase"> Erase</label>
+		<input type="button" id="grid_solve" value="Fill Grid"><input type="button" id="grid_clear" value="Clear Grid"> <span id="grid_msg"></span>
+	</div>
+	<div id="grid_svg"></div>
+
 	<table>
 		<tr>
 			<td>Version:</td>
@@ -39,17 +49,6 @@
 		<tr><td>Addons:</td><td id="addons"></td></tr> 
 		<tr><td>Available<br/>Aspects:</td><td><input type="button" id="sel_all" value="Select All Aspects"><input type="button" id="desel_all" value="Deselect All Aspects"><ul id="avail" class="aspectlist"></ul></td></tr>
 	</table>
-
-	<h3 style="margin-top:10px">Grid (any number of aspects)</h3>
-	<p>Pick a tool, click cells to match your research note, then <strong>Fill Grid</strong>. Use <em>Aspect</em> for the nodes already on the note, <em>Hole</em> for blocked cells. Aspects disabled above are used only if there is no other way.</p>
-	<div>
-		<label><input type="radio" name="grid_tool" value="node" checked> Aspect</label> <select id="grid_aspect"></select>
-		<label><input type="radio" name="grid_tool" value="hole"> Hole</label>
-		<label><input type="radio" name="grid_tool" value="erase"> Erase</label>
-		Radius <select id="grid_radius"><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
-		<input type="button" id="grid_solve" value="Fill Grid"><input type="button" id="grid_clear" value="Clear Grid"> <span id="grid_msg"></span>
-	</div>
-	<div id="grid_svg"></div>
 
 	<h3 style="margin-top:10px">Help</h3>
 	<p>This script helps you with your Thaumaturge (or Thaumcraft 4.x-5.x) research. If you have a research note with two aspects that you don't know how to connect, simply choose them in the dropdown list above (<strong>From:</strong> and <strong>To:</strong>). Additionally, choose the minimum number of steps between those two aspects. If in your research note, the two aspects have two blank spaces between them, choose the value 2 for <strong>Min. Steps</strong>. Then click <strong>Find Connection</strong> and the script will search for the shortest path (well, with at least the minimum length) that connects the two aspects. Note that sometimes the length of any path is longer then the given minimum, but this should not be a problem for your research note.</p>
