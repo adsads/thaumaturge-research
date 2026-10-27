@@ -42,3 +42,5 @@ button:hover { border-color: var(--accent); color: var(--accent); }
 .chip.off { opacity: .35; filter: grayscale(1); }
 .ghost { position: fixed; width: 40px; height: 40px; margin: -20px 0 0 -20px; pointer-events: none; z-index: 10; opacity: .85; }
 footer { padding-top: 20px; padding-bottom: 28px; }
+input#research { flex: 1; min-width: 200px; font: inherit; font-size: .9rem; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+select { font: inherit; font-size: .85rem; padding: 5px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }

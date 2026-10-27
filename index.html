@@ -15,6 +15,11 @@
 	<main>
 		<section class="card" id="board">
 			<div class="toolbar">
+				<input id="research" list="research_list" placeholder="Pick a research to load its aspects\u2026" autocomplete="off">
+				<datalist id="research_list"></datalist>
+				<label>Size <select id="complexity"><option value="1">Small (1)</option><option value="2">Medium (2)</option><option value="3">Large (3)</option></select></label>
+			</div>
+			<div class="toolbar">
 				<span id="status" role="status"></span>
 				<button id="reset" type="button">Reset grid</button>
 			</div>
@@ -34,6 +39,7 @@
 	<footer>Licensed <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Fork of <a href="https://github.com/ythri/tcresearch/tree/gh-pages">ythri/tcresearch</a> for the <a href="https://www.curseforge.com/minecraft/mc-mods/thaumaturge">Thaumaturge</a> mod. <a href="https://github.com/adsads/thaumaturge-research">Source</a>.</footer>
 	<script src="translation_dictionary.js"></script>
 	<script src="version_dictionary.js"></script>
+	<script src="research_dictionary.js"></script>
 	<script src="grid.js"></script>
 </body>
 </html>

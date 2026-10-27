@@ -3,8 +3,28 @@
 	var SIZE = 34, SQ3 = Math.sqrt(3), PAD = 6, SVGNS = "http://www.w3.org/2000/svg";
 	// Flat-top hexes as on the in-game table: q = column, r = half-row (neighbours: same column r+-2, next column r+-1).
 	var DIRS = [[0,2],[0,-2],[1,1],[1,-1],[-1,1],[-1,-1]];
-	var FULL = {0: [2,4,6,8], 1: [1,3,5,7,9], 2: [0,2,4,6,8,10], 3: [-1,1,3,5,7,9,11], 4: [0,2,4,6,8,10], 5: [1,3,5,7,9], 6: [2,4,6,8]};
+	// Note size follows research complexity: radius = 1 + complexity (see NoteGenerator in the mod). Holes are random in-game;
+	// these are the ones from a complexity-2 note you captured.
+	var FULL, R, U0;
 	var DEFAULT_HOLES = ["0,2", "3,-1", "3,5", "5,1"];
+	function setComplexity(c) {
+		R = 1 + c; U0 = 2 * R - 1; FULL = {};
+		for (var q = 0; q <= 2 * R; q++) {
+			var n = R + 1 + Math.min(q, 2 * R - q), first = U0 - (n - 1);
+			FULL[q] = []; for (var i = 0; i < n; i++) FULL[q].push(first + 2 * i);
+		}
+		holes = {}; if (c == 2) DEFAULT_HOLES.forEach(function(k){ holes[k] = 1; });
+		document.getElementById("complexity").value = c;
+	}
+	// Outer-ring cells in angular order (in-game the research aspects sit on this ring).
+	function ring() {
+		var out = [];
+		Object.keys(FULL).forEach(function(q){ FULL[q].forEach(function(r){
+			var dq = q - R, z = (r - U0 - dq) / 2;
+			if (Math.max(Math.abs(dq), Math.abs(z), Math.abs(dq + z)) == R) out.push({k: key(q, r), ang: Math.atan2((r - U0) * SQ3 / 2, 1.5 * dq)});
+		}); });
+		return out.sort(function(a, b){ return a.ang - b.ang; });
+	}
 	var data = version_dictionary.Thaumaturge, combos = data.combinations;
 	var aspects = data.base_aspects.concat(Object.keys(combos).sort(function(a, b){ return translate[a].localeCompare(translate[b]); }));
 	var graph = {};
@@ -12,7 +32,6 @@
 	Object.keys(combos).forEach(function(c){ link(c, combos[c][0]); link(c, combos[c][1]); });
 
 	var nodes = {}, fills = {}, holes = {}, disabled = {};
-	DEFAULT_HOLES.forEach(function(k){ holes[k] = 1; });
 	try { JSON.parse(localStorage.getItem("thm_disabled") || "[]").forEach(function(a){ disabled[a] = 1; }); } catch (e) {}
 
 	function key(q, r) { return q + "," + r; }
@@ -88,9 +107,9 @@
 		return Object.keys(fills).length + " cells filled";
 	}
 
-	var W = SIZE * 1.5 * 6 + 2 * SIZE + 2 * PAD, H = SQ3 / 2 * SIZE * 14 + 2 * PAD;
 	function render() {
 		var status = solve(), svg = document.getElementById("grid");
+		var W = SIZE * 3 * R + 2 * SIZE + 2 * PAD, H = SQ3 / 2 * SIZE * (4 * R + 2) + 2 * PAD;
 		svg.setAttribute("viewBox", "0 0 " + W + " " + H);
 		svg.textContent = "";
 		Object.keys(FULL).forEach(function(q){
@@ -175,9 +194,27 @@
 	document.addEventListener("pointercancel", function(){ if (drag && drag.ghost) drag.ghost.remove(); drag = null; });
 
 	document.getElementById("reset").addEventListener("click", function(){
-		nodes = {}; holes = {}; DEFAULT_HOLES.forEach(function(k){ holes[k] = 1; }); render();
+		nodes = {}; setComplexity(R - 1); render();
+	});
+	document.getElementById("complexity").addEventListener("change", function(){
+		var old = nodes; nodes = {}; setComplexity(+this.value);
+		Object.keys(old).forEach(function(k){ var p = parse(k); if (inGrid(p.q, p.r) && !holes[k]) nodes[k] = old[k]; });
+		render();
+	});
+	var research = document.getElementById("research"), list = document.getElementById("research_list");
+	research_dictionary.forEach(function(e){
+		var o = document.createElement("option"); o.value = e.name + " (" + e.category + ")"; list.appendChild(o);
+	});
+	research.addEventListener("change", function(){
+		var e = research_dictionary.filter(function(x){ return x.name + " (" + x.category + ")" == research.value; })[0];
+		if (!e) return;
+		nodes = {}; setComplexity(e.complexity);
+		var cells = ring();
+		e.aspects.forEach(function(a, i){ nodes[cells[Math.floor((i + .5) * cells.length / e.aspects.length)].k] = a; });
+		render();
+		document.getElementById("status").textContent += " \u2014 positions are random in-game, drag the aspects to match your note";
 	});
 	document.getElementById("enable_all").addEventListener("click", function(){ disabled = {}; saveDisabled(); renderPalette(); render(); });
 	document.getElementById("disable_all").addEventListener("click", function(){ aspects.forEach(function(a){ disabled[a] = 1; }); saveDisabled(); renderPalette(); render(); });
-	renderPalette(); render();
+	setComplexity(2); renderPalette(); render();
 })();
