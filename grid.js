@@ -201,12 +201,14 @@
 		Object.keys(old).forEach(function(k){ var p = parse(k); if (inGrid(p.q, p.r) && !holes[k]) nodes[k] = old[k]; });
 		render();
 	});
-	var research = document.getElementById("research"), list = document.getElementById("research_list");
+	var research = document.getElementById("research"), groups = {};
 	research_dictionary.forEach(function(e){
-		var o = document.createElement("option"); o.value = e.name + " (" + e.category + ")"; list.appendChild(o);
+		var g = groups[e.category];
+		if (!g) { g = groups[e.category] = document.createElement("optgroup"); g.label = e.category.charAt(0).toUpperCase() + e.category.slice(1); research.appendChild(g); }
+		var o = document.createElement("option"); o.value = e.id; o.textContent = e.name; g.appendChild(o);
 	});
 	research.addEventListener("change", function(){
-		var e = research_dictionary.filter(function(x){ return x.name + " (" + x.category + ")" == research.value; })[0];
+		var e = research_dictionary.filter(function(x){ return x.id == research.value; })[0];
 		if (!e) return;
 		nodes = {}; setComplexity(e.complexity);
 		var cells = ring();
