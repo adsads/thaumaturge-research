@@ -202,7 +202,7 @@ $(function(){
         	},
 		    matcher: function(search,text) { return text.toUpperCase().indexOf(search.toUpperCase())>=0 || translate[text].toUpperCase().indexOf(search.toUpperCase())>=0 }
 		});
-		$('#toSel,#fromSel').select2("val", "air");
+		$('#toSel,#fromSel').select2("val", aspects[0]);
 		graph={};
 		for (compound in combinations) {
 			connect(compound, combinations[compound][0]);
