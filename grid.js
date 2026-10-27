@@ -16,14 +16,24 @@
 		holes = {}; if (c == 2) DEFAULT_HOLES.forEach(function(k){ holes[k] = 1; });
 		document.getElementById("complexity").value = c;
 	}
-	// Outer-ring cells in angular order (in-game the research aspects sit on this ring).
+	// Outer ring in the mod's own order (HexGrid.ring), mapped to our columns: col = q + R, u = U0 + 2r + q.
+	var GAME_DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
 	function ring() {
 		var out = [];
-		Object.keys(FULL).forEach(function(q){ FULL[q].forEach(function(r){
-			var dq = q - R, z = (r - U0 - dq) / 2;
-			if (Math.max(Math.abs(dq), Math.abs(z), Math.abs(dq + z)) == R) out.push({k: key(q, r), ang: Math.atan2((r - U0) * SQ3 / 2, 1.5 * dq)});
-		}); });
-		return out.sort(function(a, b){ return a.ang - b.ang; });
+		for (var i = 0; i < 6 * R; i++) {
+			var side = Math.floor(i / R), off = i % R, q = -R, r = R;
+			for (var p = 0; p < side; p++) { q += GAME_DIRS[p][0] * R; r += GAME_DIRS[p][1] * R; }
+			q += GAME_DIRS[side][0] * off; r += GAME_DIRS[side][1] * off;
+			out.push(key(q + R, U0 + 2 * r + q));
+		}
+		return out;
+	}
+	// HexGrid.distributeRing: aspects are spread evenly over the ring, in note order, from a random start.
+	function placeResearch(e, shift) {
+		var cells = ring(), n = e.aspects.length; nodes = {};
+		e.aspects.forEach(function(a, slot){
+			nodes[cells[Math.floor((2 * (shift * n + slot * cells.length) + n) / (2 * n)) % cells.length]] = a;
+		});
 	}
 	var data = version_dictionary.Thaumaturge, combos = data.combinations;
 	var aspects = data.base_aspects.concat(Object.keys(combos).sort(function(a, b){ return translate[a].localeCompare(translate[b]); }));
@@ -236,14 +246,15 @@
 	});
 	document.addEventListener("pointerdown", function(ev){ if (!ev.target.closest(".combo")) hideMenu(); }, true);
 	function pick(e) { research.value = label(e); hideMenu(); research.blur(); loadResearch(e); }
+	var current = null, shift = 0;
 	function loadResearch(e) {
-		nodes = {}; setComplexity(e.complexity);
-		var cells = ring();
-		e.aspects.forEach(function(a, i){ nodes[cells[Math.floor((i + .5) * cells.length / e.aspects.length)].k] = a; });
-		render();
-		document.getElementById("status").textContent += " \u2014 positions are random in-game, drag the aspects to match your note";
-
+		current = e; shift = 0; setComplexity(e.complexity); placeResearch(e, shift); render();
+		document.getElementById("status").textContent += " \u2014 aspect positions and holes are random in-game: press Rotate until they match your note";
 	}
+	document.getElementById("rotate").addEventListener("click", function(){
+		if (!current) return;
+		shift = (shift + 1) % (6 * R); placeResearch(current, shift); render();
+	});
 	document.getElementById("enable_all").addEventListener("click", function(){ disabled = {}; saveDisabled(); renderPalette(); render(); });
 	document.getElementById("disable_all").addEventListener("click", function(){ aspects.forEach(function(a){ disabled[a] = 1; }); saveDisabled(); renderPalette(); render(); });
 	setComplexity(2); renderPalette(); render();
