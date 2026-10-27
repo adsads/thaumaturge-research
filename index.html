@@ -1,58 +1,39 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Thaumaturge Research Helper</title>
-	<script type="text/javascript" src="buckets-minified.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="select2.min.js"></script>
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
-	<link rel="stylesheet" href="select2.css">
-	<script type="text/javascript" src="translation_dictionary.js"></script>
-	<script type="text/javascript" src="version_dictionary.js"></script>
-	<script type="text/javascript" src="addon_dictionary.js"></script>
-	<script type="text/javascript" src="tcresearch.js"></script>
-	<script type="text/javascript" src="grid.js"></script>
-	<link rel="stylesheet" href="tcresearch.css">
-	<style type="text/css">
-	.select2-container .select2-choice {
-		height: 44px;
-	}
-	</style>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h2>Thaumaturge Research Helper</h2>
-	<div id="combination_box"><div id="left"></div><span class="operator">+</span><div id="right"></div><span class="operator">=</span><div id="equals"></div></div>
-	<h3>Grid (any number of aspects)</h3>
-	<p>Pick a tool, click cells to match your research note, then <strong>Fill Grid</strong>. Use <em>Aspect</em> for the nodes already on the note, <em>Hole</em> for blocked cells. Aspects disabled above are used only if there is no other way.</p>
-	<div>
-		<label><input type="radio" name="grid_tool" value="node" checked> Aspect</label> <select id="grid_aspect"></select>
-		<label><input type="radio" name="grid_tool" value="hole"> Hole</label>
-		<label><input type="radio" name="grid_tool" value="erase"> Erase</label>
-		<input type="button" id="grid_solve" value="Fill Grid"><input type="button" id="grid_clear" value="Clear Grid"> <span id="grid_msg"></span>
-	</div>
-	<div id="grid_svg"></div>
-
-	<table>
-		<tr>
-			<td>Version:</td>
-			<td>
-				<select id="version">
-				</select>
-			</td>
-		</tr>
-		<tr><td>From:</td><td><input type=hidden id="fromSel"></input></td></tr>
-		<tr><td>To:</td><td><input type=hidden id="toSel"></input></td></tr>
-		<tr><td>Min. Steps:</td><td><input id="spinner" name="value" value="1" style="width:140px" /></td></tr>
-		<tr><td></td><td><input id="find_connection" type="button" value="Find Connection" /><input id="close_results" type="button" value="Close all results" /></td></tr>
-		<tr><td>Addons:</td><td id="addons"></td></tr> 
-		<tr><td>Available<br/>Aspects:</td><td><input type="button" id="sel_all" value="Select All Aspects"><input type="button" id="desel_all" value="Deselect All Aspects"><ul id="avail" class="aspectlist"></ul></td></tr>
-	</table>
-
-	<h3 style="margin-top:10px">Help</h3>
-	<p>This script helps you with your Thaumaturge (or Thaumcraft 4.x-5.x) research. If you have a research note with two aspects that you don't know how to connect, simply choose them in the dropdown list above (<strong>From:</strong> and <strong>To:</strong>). Additionally, choose the minimum number of steps between those two aspects. If in your research note, the two aspects have two blank spaces between them, choose the value 2 for <strong>Min. Steps</strong>. Then click <strong>Find Connection</strong> and the script will search for the shortest path (well, with at least the minimum length) that connects the two aspects. Note that sometimes the length of any path is longer then the given minimum, but this should not be a problem for your research note.</p>
-	<p>If you are unhappy with the path you got, because you do not have access to those aspects yet or they are quite rare, simply disable those aspects from <strong>Available Aspects:</strong>. The script will then try to find paths without these. Note that this may cause the path to grow longer. If too many aspects are disabled and there are no paths left without any of those, the script will try to find the shortest path using the minimal number of disabled aspects.</p>
-	<p style="size:small;color:#666;margin-top:10px;">This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/" style="color:#55a;">Creative Commons Attribution 4.0 License</a>. Sources can be found in the <a href="https://github.com/ythri/tcresearch/tree/gh-pages" style="color:#55a;">original project</a> by ythri, forked for Thaumaturge. Sources: <a href="https://github.com/adsads/thaumaturge-research" style="color:#55a;">github repository</a>.</p>
+	<header>
+		<h1>Thaumaturge Research Helper</h1>
+		<p>Drag aspects from the right onto your research note, and the gaps fill in automatically.
+			<a href="classic.html">Classic From/To finder</a></p>
+	</header>
+	<main>
+		<section class="card" id="board">
+			<div class="toolbar">
+				<span id="status" role="status"></span>
+				<button id="reset" type="button">Reset grid</button>
+			</div>
+			<svg id="grid" viewBox="0 0 10 10" aria-label="Research grid"></svg>
+			<div id="used"></div>
+			<p class="hint">Drag an aspect onto a cell. Click an empty cell to toggle a hole. Click an aspect on the grid to remove it, or drag it to move it (drop it off the grid to remove).</p>
+		</section>
+		<aside class="card">
+			<div class="toolbar">
+				<h2>Aspects</h2>
+				<span><button id="enable_all" type="button">Enable all</button> <button id="disable_all" type="button">Disable all</button></span>
+			</div>
+			<p class="hint">Drag to place. Click to disable ones you haven't unlocked (they're only used when there's no other way).</p>
+			<div id="palette"></div>
+		</aside>
+	</main>
+	<footer>Licensed <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Fork of <a href="https://github.com/ythri/tcresearch/tree/gh-pages">ythri/tcresearch</a> for the <a href="https://www.curseforge.com/minecraft/mc-mods/thaumaturge">Thaumaturge</a> mod. <a href="https://github.com/adsads/thaumaturge-research">Source</a>.</footer>
+	<script src="translation_dictionary.js"></script>
+	<script src="version_dictionary.js"></script>
+	<script src="grid.js"></script>
 </body>
 </html>

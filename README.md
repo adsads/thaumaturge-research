@@ -1,5 +1,5 @@
 # Thaumaturge Research Helper
-Fork of [ythri/tcresearch](https://github.com/ythri/tcresearch) updated for the [Thaumaturge](https://www.curseforge.com/minecraft/mc-mods/thaumaturge) mod (ATM11). The `Thaumaturge` entry in the Version dropdown holds its aspect recipes; older Thaumcraft versions are still selectable. Alkimia has no icon yet (Thaumaturge's art is all-rights-reserved).
+Fork of [ythri/tcresearch](https://github.com/ythri/tcresearch) updated for the [Thaumaturge](https://www.curseforge.com/minecraft/mc-mods/thaumaturge) mod (ATM11). The main page is a drag-and-drop hex grid: drop 2+ aspects on it and the gaps fill in (click an aspect chip to mark it as not unlocked). `classic.html` keeps the original From/To finder. The `Thaumaturge` entry in the Version dropdown holds its aspect recipes; older Thaumcraft versions are still selectable. Alkimia has no icon yet (Thaumaturge's art is all-rights-reserved).
 
 [Thaumcraft Research Helper](http://ythri.github.io/tcresearch/)
 
