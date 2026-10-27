@@ -1,5 +1,5 @@
 $(function(){
-	var latest_version = "5.1.3";
+	var latest_version = "Thaumaturge";
 	$.each(version_dictionary, function(key,version){
 		$("#version").append("<option value="+key+">"+key+"</option>");
 	});
@@ -142,7 +142,7 @@ $(function(){
 	});
 	$("body").on("mouseenter", ".aspectlist .aspect", function() {
 		var aspect = $(this).attr("id");
-		if (aspect!="fire"&&aspect!="water"&&aspect!="order"&&aspect!="air"&&aspect!="entropy"&&aspect!="earth"){
+		if (aspect in combinations){
 			var combination = combinations[aspect];
 			$("#combination_box #left").html('<img src="aspects/color/' + translate[combination[0]] + '.png" /><div class="name">' + formatAspectName(translate[combination[0]]) + '</div><div class="desc">' + combination[0] + '</div>');
 			$("#combination_box #right").html('<img src="aspects/color/' + translate[combination[1]] + '.png" /><div class="name">' + formatAspectName(translate[combination[1]]) + '</div><div class="desc">' + combination[1] + '</div>');

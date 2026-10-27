@@ -1,4 +1,6 @@
-# Thaumcraft 4.1 Research Helper
+# Thaumaturge Research Helper
+Fork of [ythri/tcresearch](https://github.com/ythri/tcresearch) updated for the [Thaumaturge](https://www.curseforge.com/minecraft/mc-mods/thaumaturge) mod (ATM11). The `Thaumaturge` entry in the Version dropdown holds its aspect recipes; older Thaumcraft versions are still selectable. Alkimia has no icon yet (Thaumaturge's art is all-rights-reserved).
+
 [Thaumcraft Research Helper](http://ythri.github.io/tcresearch/)
 
 ## Using 
