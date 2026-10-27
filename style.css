@@ -42,5 +42,10 @@ button:hover { border-color: var(--accent); color: var(--accent); }
 .chip.off { opacity: .35; filter: grayscale(1); }
 .ghost { position: fixed; width: 40px; height: 40px; margin: -20px 0 0 -20px; pointer-events: none; z-index: 10; opacity: .85; }
 footer { padding-top: 20px; padding-bottom: 28px; }
-#research { flex: 1; min-width: 200px; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 select { font: inherit; font-size: .85rem; padding: 5px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.combo { position: relative; flex: 1; min-width: 200px; }
+.combo input { width: 100%; font: inherit; font-size: .9rem; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+#research_list { position: absolute; z-index: 5; left: 0; right: 0; margin: 4px 0 0; padding: 4px; list-style: none; max-height: 320px; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+#research_list li { padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: .9rem; }
+#research_list li.grp { cursor: default; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; padding-top: 8px; }
+#research_list li.active, #research_list li[data-i]:hover { background: var(--accent); color: #fff; }

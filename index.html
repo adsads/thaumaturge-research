@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Thaumaturge Research Helper</title>
-	<link rel="stylesheet" href="style.css?v=3">
+	<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 	<header>
@@ -15,7 +15,7 @@
 	<main>
 		<section class="card" id="board">
 			<div class="toolbar">
-				<select id="research"><option value="">Pick a research…</option></select>
+				<div class="combo"><input id="research" placeholder="Search researches…" autocomplete="off" role="combobox" aria-expanded="false"><ul id="research_list" role="listbox" hidden></ul></div>
 				<label>Size <select id="complexity"><option value="1">Small (1)</option><option value="2">Medium (2)</option><option value="3">Large (3)</option></select></label>
 			</div>
 			<div class="toolbar">
@@ -36,9 +36,9 @@
 		</aside>
 	</main>
 	<footer>Licensed <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Fork of <a href="https://github.com/ythri/tcresearch/tree/gh-pages">ythri/tcresearch</a> for the <a href="https://www.curseforge.com/minecraft/mc-mods/thaumaturge">Thaumaturge</a> mod. <a href="https://github.com/adsads/thaumaturge-research">Source</a>.</footer>
-	<script src="translation_dictionary.js?v=3"></script>
-	<script src="version_dictionary.js?v=3"></script>
-	<script src="research_dictionary.js?v=3"></script>
-	<script src="grid.js?v=3"></script>
+	<script src="translation_dictionary.js?v=4"></script>
+	<script src="version_dictionary.js?v=4"></script>
+	<script src="research_dictionary.js?v=4"></script>
+	<script src="grid.js?v=4"></script>
 </body>
 </html>

@@ -201,21 +201,49 @@
 		Object.keys(old).forEach(function(k){ var p = parse(k); if (inGrid(p.q, p.r) && !holes[k]) nodes[k] = old[k]; });
 		render();
 	});
-	var research = document.getElementById("research"), groups = {};
-	research_dictionary.forEach(function(e){
-		var g = groups[e.category];
-		if (!g) { g = groups[e.category] = document.createElement("optgroup"); g.label = e.category.charAt(0).toUpperCase() + e.category.slice(1); research.appendChild(g); }
-		var o = document.createElement("option"); o.value = e.id; o.textContent = e.name; g.appendChild(o);
+	var research = document.getElementById("research"), menu = document.getElementById("research_list"), shown = [], active = -1;
+	function label(e) { return e.name; }
+	function showMenu() {
+		var q = research.value.trim().toLowerCase(), last = "";
+		shown = research_dictionary.filter(function(e){ return !q || e.name.toLowerCase().indexOf(q) >= 0 || e.category.indexOf(q) >= 0; });
+		menu.textContent = ""; active = -1;
+		shown.forEach(function(e, i){
+			if (e.category != last) { last = e.category; var h = document.createElement("li"); h.className = "grp"; h.textContent = last; menu.appendChild(h); }
+			var li = document.createElement("li"); li.textContent = label(e); li.setAttribute("data-i", i); li.setAttribute("role", "option"); menu.appendChild(li);
+		});
+		if (!shown.length) { var n = document.createElement("li"); n.className = "grp"; n.textContent = "No match"; menu.appendChild(n); }
+		menu.hidden = false; research.setAttribute("aria-expanded", "true");
+	}
+	function hideMenu() { menu.hidden = true; research.setAttribute("aria-expanded", "false"); }
+	function highlight(i) {
+		var items = menu.querySelectorAll("li[data-i]");
+		if (!items.length) return;
+		active = (i + items.length) % items.length;
+		items.forEach(function(n, j){ n.classList.toggle("active", j == active); });
+		items[active].scrollIntoView({block: "nearest"});
+	}
+	research.addEventListener("focus", showMenu);
+	research.addEventListener("input", showMenu);
+	research.addEventListener("keydown", function(ev){
+		if (ev.key == "ArrowDown") { if (menu.hidden) showMenu(); highlight(active + 1); ev.preventDefault(); }
+		else if (ev.key == "ArrowUp") { highlight(active - 1); ev.preventDefault(); }
+		else if (ev.key == "Enter" && shown[active]) { pick(shown[active]); ev.preventDefault(); }
+		else if (ev.key == "Escape") hideMenu();
 	});
-	research.addEventListener("change", function(){
-		var e = research_dictionary.filter(function(x){ return x.id == research.value; })[0];
-		if (!e) return;
+	menu.addEventListener("mousedown", function(ev){
+		var li = ev.target.closest("li[data-i]");
+		if (li) { pick(shown[+li.getAttribute("data-i")]); ev.preventDefault(); }
+	});
+	document.addEventListener("pointerdown", function(ev){ if (!ev.target.closest(".combo")) hideMenu(); }, true);
+	function pick(e) { research.value = label(e); hideMenu(); research.blur(); loadResearch(e); }
+	function loadResearch(e) {
 		nodes = {}; setComplexity(e.complexity);
 		var cells = ring();
 		e.aspects.forEach(function(a, i){ nodes[cells[Math.floor((i + .5) * cells.length / e.aspects.length)].k] = a; });
 		render();
 		document.getElementById("status").textContent += " \u2014 positions are random in-game, drag the aspects to match your note";
-	});
+
+	}
 	document.getElementById("enable_all").addEventListener("click", function(){ disabled = {}; saveDisabled(); renderPalette(); render(); });
 	document.getElementById("disable_all").addEventListener("click", function(){ aspects.forEach(function(a){ disabled[a] = 1; }); saveDisabled(); renderPalette(); render(); });
 	setComplexity(2); renderPalette(); render();
